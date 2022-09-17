@@ -3,6 +3,7 @@ import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
 import {
   getAuth,
   onAuthStateChanged,
+  createUserWithEmailAndPassword,
   signInWithRedirect,
   signInWithPopup,
   GoogleAuthProvider,
@@ -19,17 +20,32 @@ const firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig);
 
-const provider = new GoogleAuthProvider();
-provider.setCustomParameters({
+// Login authentication
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({
   prompt: "select_account",
 });
 
 export const auth = getAuth(firebaseApp);
-export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
 
+export const signInWithGooglePopup = async () =>
+  signInWithPopup(auth, googleProvider);
+
+export const signInWithGoogleRedirect = async () =>
+  signInWithRedirect(auth, googleProvider);
+
+export const createAuthUserWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return;
+  const { user } = await createUserWithEmailAndPassword(auth, email, password);
+  return user;
+};
+
+// Database maintenance
 export const db = getFirestore(firebaseApp);
 
 export const createUserDocFromAuth = async (userAuth) => {
+  if (!userAuth) return;
+
   const { displayName, email } = userAuth;
   const createdAt = new Date();
 
