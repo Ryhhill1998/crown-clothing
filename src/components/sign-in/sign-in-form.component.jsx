@@ -1,14 +1,15 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import {
-  auth,
   signInAuthUserWithEmailAndPassword,
   signInWithGooglePopup,
-  createUserDocFromAuth,
+  signInWithFacebookPopup,
 } from "../../utils/firebase/firebase.utils";
 
 import FormInput from "../form-input/form-input.component";
 import Button from "../button/button.component";
-import { UserContext } from "../../contexts/user.context";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGoogle, faFacebook } from "@fortawesome/free-brands-svg-icons";
 
 import "./sign-in-form.styles.scss";
 
@@ -20,8 +21,6 @@ const defaultFormFields = {
 const SignInForm = () => {
   const [formFields, setFormFIelds] = useState(defaultFormFields);
   const { email, password } = formFields;
-
-  const { setCurrentUser } = useContext(UserContext);
 
   const resetFormFields = () => {
     setFormFIelds(defaultFormFields);
@@ -36,9 +35,7 @@ const SignInForm = () => {
     event.preventDefault();
 
     try {
-      const user = await signInAuthUserWithEmailAndPassword(email, password);
-      console.log(user);
-      setCurrentUser(user);
+      await signInAuthUserWithEmailAndPassword(email, password);
       resetFormFields();
     } catch (err) {
       if (err.code === "auth/user-not-found")
@@ -48,10 +45,9 @@ const SignInForm = () => {
     }
   };
 
-  const logInGooglePopup = async () => {
-    const { user } = await signInWithGooglePopup();
-    await createUserDocFromAuth(user);
-  };
+  const logInGooglePopup = async () => await signInWithGooglePopup();
+
+  const logInFacebookPopup = async () => await signInWithFacebookPopup();
 
   return (
     <div className="sign-in-container">
@@ -88,7 +84,20 @@ const SignInForm = () => {
               onClick: logInGooglePopup,
             }}
           >
-            Google Sign In
+            <span>
+              <FontAwesomeIcon icon={faGoogle} /> Sign In
+            </span>
+          </Button>
+          <Button
+            type="button"
+            buttonType="facebook"
+            buttonOptions={{
+              onClick: logInFacebookPopup,
+            }}
+          >
+            <span>
+              <FontAwesomeIcon icon={faFacebook} /> Sign In
+            </span>
           </Button>
         </div>
       </form>

@@ -7,6 +7,8 @@ import { UserContext } from "../../contexts/user.context";
 import { ReactComponent as CrwnLogo } from "../../assets/crown.svg";
 import "./navigation.styles.scss";
 
+import { signOutUser } from "../../utils/firebase/firebase.utils";
+
 const Navbar = () => {
   const { currentUser } = useContext(UserContext);
 
@@ -24,13 +26,14 @@ const Navbar = () => {
             Contact
           </Link>
           {currentUser ? (
-            <span className="nav-link">Sign out</span>
+            <span onClick={signOutUser} className="nav-link">
+              Sign out
+            </span>
           ) : (
             <Link className="nav-link" to="/auth">
               Sign in
             </Link>
           )}
-
           <Link className="nav-link" to="/cart">
             Cart
           </Link>

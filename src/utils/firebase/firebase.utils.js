@@ -7,7 +7,10 @@ import {
   signInWithRedirect,
   signInWithPopup,
   GoogleAuthProvider,
+  FacebookAuthProvider,
   updateProfile,
+  signOut,
+  onAuthStateChanged,
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -21,21 +24,31 @@ const firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig);
 
-// Login authentication
+// ---------- SIGN IN AUTHENTICATION ---------- //
+const auth = getAuth(firebaseApp);
+
+// google sign in
 const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({
   prompt: "select_account",
 });
 
-export const auth = getAuth(firebaseApp);
-
-// sign in authentication
 export const signInWithGooglePopup = async () =>
-  signInWithPopup(auth, googleProvider);
+  await signInWithPopup(auth, googleProvider);
 
 export const signInWithGoogleRedirect = async () =>
-  signInWithRedirect(auth, googleProvider);
+  await signInWithRedirect(auth, googleProvider);
 
+// facebook sign in
+const facebookProvider = new FacebookAuthProvider();
+facebookProvider.setCustomParameters({
+  display: "popup",
+});
+
+export const signInWithFacebookPopup = async () =>
+  await signInWithPopup(auth, facebookProvider);
+
+// sign in with email and password
 export const signInAuthUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) return;
 
@@ -43,17 +56,34 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
   return user;
 };
 
-export const updateUserDisplayName = async (user, displayName) =>
-  await updateProfile(user, { displayName });
-
-// sign up authentication
+// ---------- SIGN UP AUTHENTICATION ---------- //
 export const createAuthUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) return;
+
   const { user } = await createUserWithEmailAndPassword(auth, email, password);
   return user;
 };
 
-// Database maintenance
+// update user display name
+export const updateUserDisplayName = async (user, displayName) =>
+  await updateProfile(user, { displayName });
+
+// ---------- SIGN OUT AUTHENTICATION ---------- //
+export const signOutUser = async () => {
+  try {
+    await signOut(auth);
+  } catch (err) {
+    console.error(err.message);
+  }
+};
+
+// auth state changed listener
+export const onAuthStateChangedListener = (callback) => {
+  if (!callback) return;
+  onAuthStateChanged(auth, callback);
+};
+
+// ---------- DATABASE MAINTENANCE ---------- //
 export const db = getFirestore(firebaseApp);
 
 export const createUserDocFromAuth = async (userAuth) => {

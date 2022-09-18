@@ -1,6 +1,6 @@
 .button-container {
-  min-width: 165px;
-  width: 45%;
+  width: 100%;
+  max-width: 120px;
   height: 50px;
   letter-spacing: 0.5px;
   line-height: 50px;
@@ -8,7 +8,6 @@
   font-size: 15px;
   background-color: black;
   color: white;
-  text-transform: uppercase;
   font-family: inherit;
   font-weight: bolder;
   border: none;
@@ -23,12 +22,24 @@
   }
 
   &.google-sign-in {
-    background-color: #4285f4;
+    background-color: #cc3636;
     color: white;
 
     &:hover {
-      background-color: #357ae8;
-      border: none;
+      background-color: white;
+      color: #cc3636;
+      border: 1px solid #cc3636;
+    }
+  }
+
+  &.facebook-sign-in {
+    background-color: #277bc0;
+    color: white;
+
+    &:hover {
+      background-color: white;
+      color: #277bc0;
+      border: 1px solid #277bc0;
     }
   }
 

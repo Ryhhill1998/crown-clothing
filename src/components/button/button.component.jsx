@@ -2,6 +2,7 @@ import "./button.styles.scss";
 
 const BUTTON_TYPE_CLASSES = {
   google: "google-sign-in",
+  facebook: "facebook-sign-in",
   inverted: "inverted",
 };
 
