@@ -11,11 +11,10 @@ import CartDropdown from "../../components/cart-dropdown/cart-dropdown.component
 import { signOutUser } from "../../utils/firebase/firebase.utils";
 
 import "./navigation.styles.scss";
-import { useState } from "react";
 
 const Navbar = () => {
   const { currentUser } = useContext(UserContext);
-  const { cart } = useContext(CartContext);
+  const { cartOpen } = useContext(CartContext);
 
   return (
     <Fragment>
@@ -41,7 +40,7 @@ const Navbar = () => {
           )}
           <CartIcon />
         </div>
-        {cart.open && <CartDropdown />}
+        {cartOpen && <CartDropdown />}
       </div>
       <Outlet />
     </Fragment>
