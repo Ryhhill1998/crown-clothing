@@ -23,12 +23,7 @@
     overflow: scroll;
   }
 
-  .checkout-button {
-    display: flex;
-
-    button {
-      flex-grow: 1;
-      margin-top: auto;
-    }
+  button {
+    margin-top: auto;
   }
 }

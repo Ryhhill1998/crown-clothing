@@ -12,15 +12,13 @@ const addItem = (items, itemToAdd) => {
   return deepCopyItems;
 };
 
-const removeItem = (items, itemToRemove) => {
-  const deepCopyItems = _.cloneDeep(items);
-  return deepCopyItems.filter((item) => item.id !== itemToRemove.id);
-};
+const removeItem = (items, itemToRemove) =>
+  _.cloneDeep(items).filter((item) => item.id !== itemToRemove.id);
 
-const updateItem = (items, itemToUpdate, updateType) => {
+const decreaseItem = (items, itemToDecrease) => {
   const deepCopyItems = _.cloneDeep(items);
-  const foundItem = deepCopyItems.find((item) => item.id === itemToUpdate.id);
-  updateType === "increase" ? foundItem.quantity++ : foundItem.quantity--;
+  const foundItem = deepCopyItems.find((item) => item.id === itemToDecrease.id);
+  foundItem.quantity--;
   if (foundItem.quantity === 0) {
     return removeItem(deepCopyItems, foundItem);
   }
@@ -33,7 +31,7 @@ export const CartContext = createContext({
   cartItems: [],
   addItemToCart: () => {},
   removeItemFromCart: () => {},
-  updateItemQuantity: () => {},
+  decreaseItemQuantity: () => {},
   cartItemCount: 0,
   cartTotal: 0,
 });
@@ -60,8 +58,8 @@ export const CartProvider = ({ children }) => {
   const removeItemFromCart = (productToRemove) =>
     setCartItems(removeItem(cartItems, productToRemove));
 
-  const updateItemQuantity = (productToUpdate, updateType) =>
-    setCartItems(updateItem(cartItems, productToUpdate, updateType));
+  const decreaseItemQuantity = (productToDecrease) =>
+    setCartItems(decreaseItem(cartItems, productToDecrease));
 
   const value = {
     cartOpen,
@@ -69,7 +67,7 @@ export const CartProvider = ({ children }) => {
     cartItems,
     addItemToCart,
     removeItemFromCart,
-    updateItemQuantity,
+    decreaseItemQuantity,
     cartItemCount,
     cartTotal,
   };
