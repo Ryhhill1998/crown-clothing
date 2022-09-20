@@ -23,11 +23,12 @@
     overflow: scroll;
   }
 
-  button {
-    margin-top: auto;
-  }
-}
+  .checkout-button {
+    display: flex;
 
-.hidden {
-  display: none;
+    button {
+      flex-grow: 1;
+      margin-top: auto;
+    }
+  }
 }
