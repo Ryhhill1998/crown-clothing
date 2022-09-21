@@ -2,12 +2,10 @@ import "./sign-up-form.styles.scss";
 import FormInput from "../form-input/form-input.component";
 import Button from "../button/button.component";
 
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { UserContext } from "../../contexts/user.context";
 
-import {
-  createAuthUserWithEmailAndPassword,
-  updateUserDisplayName,
-} from "../../utils/firebase/firebase.utils";
+import { createAuthUserWithEmailAndPassword } from "../../utils/firebase/firebase.utils";
 
 const defaultFormFields = {
   displayName: "",
@@ -19,6 +17,8 @@ const defaultFormFields = {
 const SignUpForm = () => {
   const [formFields, setFormFIelds] = useState(defaultFormFields);
   const { displayName, email, password, confirmPassword } = formFields;
+
+  const { setAdditionalUserInfo } = useContext(UserContext);
 
   const resetFormFields = () => {
     setFormFIelds(defaultFormFields);
@@ -32,11 +32,14 @@ const SignUpForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (password !== confirmPassword) alert("Passwords do not match!");
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
 
     try {
-      const user = await createAuthUserWithEmailAndPassword(email, password);
-      updateUserDisplayName(user, displayName);
+      setAdditionalUserInfo({ displayName });
+      await createAuthUserWithEmailAndPassword(email, password);
       resetFormFields();
     } catch (err) {
       if (err.code === "auth/email-already-in-use") {

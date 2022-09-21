@@ -1,5 +1,12 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+} from "firebase/firestore";
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -86,21 +93,31 @@ export const onAuthStateChangedListener = (callback) => {
 // ---------- DATABASE MAINTENANCE ---------- //
 export const db = getFirestore(firebaseApp);
 
-export const createUserDocFromAuth = async (userAuth) => {
+export const createUserDocFromAuth = async (userAuth, additionalInfo) => {
   if (!userAuth) return;
 
-  const { displayName, email } = userAuth;
-  const createdAt = new Date();
+  console.log("Creating user doc");
 
-  try {
-    const docRef = await addDoc(collection(db, "users"), {
-      displayName,
-      email,
-      createdAt,
-    });
-    console.log("Document written with ID: ", docRef.id);
-  } catch (e) {
-    console.error("Error adding document: ", e.message);
+  console.log(additionalInfo);
+
+  const userDocRef = doc(db, "users", userAuth.uid);
+  const userDocSnap = await getDoc(userDocRef);
+
+  if (!userDocSnap.exists()) {
+    const { displayName, email } = userAuth;
+    const createdAt = new Date();
+
+    try {
+      await setDoc(userDocRef, {
+        displayName,
+        email,
+        createdAt,
+        ...additionalInfo,
+      });
+      console.log("created doc");
+    } catch (e) {
+      console.error("Error adding document: ", e.message);
+    }
   }
 };
 
