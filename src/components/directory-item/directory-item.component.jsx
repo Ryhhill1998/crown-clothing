@@ -10,12 +10,12 @@ const DirectoryItem = ({ category }) => {
   const goToCategoryHandler = () => navigate(`/shop/${title}`);
 
   return (
-    <div className="directory-item-container">
+    <div className="directory-item-container" onClick={goToCategoryHandler}>
       <div
         className="background-image"
         style={{ backgroundImage: `url(${imageUrl})` }}
       />
-      <div className="directory-item-body" onClick={goToCategoryHandler}>
+      <div className="directory-item-body">
         <h2>{title}</h2>
         <p>Shop now</p>
       </div>
