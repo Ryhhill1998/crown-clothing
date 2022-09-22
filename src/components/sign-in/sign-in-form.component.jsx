@@ -6,12 +6,12 @@ import {
 } from "../../utils/firebase/firebase.utils";
 
 import FormInput from "../form-input/form-input.component";
-import Button from "../button/button.component";
+import Button, { BUTTON_TYPE_CLASSES } from "../button/button.component";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle, faFacebook } from "@fortawesome/free-brands-svg-icons";
 
-import "./sign-in-form.styles.scss";
+import { SignInContainer, ButtonsContainer } from "./sign-in-form.styles.jsx";
 
 const defaultFormFields = {
   email: "",
@@ -50,7 +50,7 @@ const SignInForm = () => {
   const logInFacebookPopup = async () => await signInWithFacebookPopup();
 
   return (
-    <div className="sign-in-container">
+    <SignInContainer>
       <h2>I already have an account</h2>
       <h3>Sign in with your email and password</h3>
       <form onSubmit={handleSubmit}>
@@ -75,11 +75,11 @@ const SignInForm = () => {
             required: true,
           }}
         />
-        <div className="buttons-container">
+        <ButtonsContainer>
           <Button type="submit">Sign In</Button>
           <Button
             type="button"
-            buttonType="google"
+            buttonType={BUTTON_TYPE_CLASSES.google}
             buttonOptions={{
               onClick: logInGooglePopup,
             }}
@@ -90,7 +90,7 @@ const SignInForm = () => {
           </Button>
           <Button
             type="button"
-            buttonType="facebook"
+            buttonType={BUTTON_TYPE_CLASSES.facebook}
             buttonOptions={{
               onClick: logInFacebookPopup,
             }}
@@ -99,9 +99,9 @@ const SignInForm = () => {
               <FontAwesomeIcon icon={faFacebook} /> Sign In
             </span>
           </Button>
-        </div>
+        </ButtonsContainer>
       </form>
-    </div>
+    </SignInContainer>
   );
 };
 
