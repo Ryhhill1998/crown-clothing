@@ -2,10 +2,12 @@ import { initializeApp } from "firebase/app";
 import {
   getFirestore,
   collection,
+  writeBatch,
   doc,
   setDoc,
   getDoc,
   getDocs,
+  query,
 } from "firebase/firestore";
 import {
   getAuth,
@@ -93,12 +95,9 @@ export const onAuthStateChangedListener = (callback) => {
 // ---------- DATABASE MAINTENANCE ---------- //
 export const db = getFirestore(firebaseApp);
 
+// create user document in users collection
 export const createUserDocFromAuth = async (userAuth, additionalInfo) => {
   if (!userAuth) return;
-
-  console.log("Creating user doc");
-
-  console.log(additionalInfo);
 
   const userDocRef = doc(db, "users", userAuth.uid);
   const userDocSnap = await getDoc(userDocRef);
@@ -114,16 +113,40 @@ export const createUserDocFromAuth = async (userAuth, additionalInfo) => {
         createdAt,
         ...additionalInfo,
       });
-      console.log("created doc");
     } catch (e) {
       console.error("Error adding document: ", e.message);
     }
   }
 };
 
-export const getUserDocs = async () => {
-  const querySnapshot = await getDocs(collection(db, "users"));
-  querySnapshot.forEach((doc) => {
-    console.log(`${doc.id} => ${doc.data()}`);
+// create documents for each product category in categories collection
+export const addCollectionAndDocuments = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  const collectionRef = collection(db, collectionKey);
+  const batch = writeBatch(db);
+
+  objectsToAdd.forEach((object) => {
+    const docRef = doc(collectionRef, object.title.toLowerCase());
+    batch.set(docRef, object);
   });
+
+  await batch.commit();
+  console.log("Batches committed");
+};
+
+// get documents from categories collection
+export const getCategoriesAndDocuments = async () => {
+  const collectionRef = collection(db, "categories");
+  const q = query(collectionRef);
+  const querySnapshot = await getDocs(q);
+
+  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
+    const { title, items } = docSnapshot.data();
+    acc[title.toLowerCase()] = items;
+    return acc;
+  }, {});
+
+  return categoryMap;
 };
